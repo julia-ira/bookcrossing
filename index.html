@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Books</title>
+  </head>
+  <body>
+  	<div class="container-fluid">          
+  		<table class="table table-hover table-striped">
+  			<thead>
+  				<tr>
+  					<th>Title</th>
+  					<th>Author</th>
+  					<th>Year</th>
+  					<th>Photo</th>
+  					<th>Condition</th>
+  					<th>Status</th>          
+  				</tr>
+  			</thead>
+  			<tbody id="books">
+  			</tbody>
+  		</table>
+  	</div>
+
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="js/underscore.min.js"></script>
+	<script type="text/javascript" src="js/backbone.min.js"></script>
+	<script type="text/javascript" src="js/books.js"></script>
+
+	<script type="text/template" id="book-item">
+		<td><%= title %></td>
+		<td><%= author %></td>
+		<td><%= year %></td>
+		<td><%= photo %></td>
+		<td><%= condition %></td>
+		<td><%= status %></td>
+	</script>
+  </body>
+</html>
