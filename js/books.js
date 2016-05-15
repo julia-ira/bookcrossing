@@ -25,7 +25,7 @@ Book = Backbone.Model.extend({
     },
     validate: function (attr) {
     },
-	urlRoot: serverUrl + 'book'
+	urlRoot: serverUrl + 'books'
 });
 
 BookCollection = Backbone.Collection.extend({
