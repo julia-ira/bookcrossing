@@ -81,7 +81,7 @@ $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 			   ->fetch();
 	$book["owner"] = $db->user()
 						->select('name, city, date_of_birth, description')
-						->where('id', $book['user_id'])
+						->where('id', $book['id'])
 						->fetch();
 	$book["owners"] = $db->ownership()->select('user_id, start_date, end_date');
 	$book['tags'] = $book->tags()->select('tag');
