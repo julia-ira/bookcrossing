@@ -1,19 +1,10 @@
 <?php
 // Users
-// виводимо всіх користувачів
 $app->get('/users', function ($request, $response, $args) use ($app, $db) {
 	$users = $db->user()
 	            ->select('name','email','city','date_of_birth','description');
     $response->write(json_encode($users));
 });
-// додаємо користувача, повератається об’єкт user або помилка
-$app->post('/users', function ($request, $response, $args) use ($app, $db) {
-    $user = $request->getParsedBody();
-    $data = $db->user()
-               ->insert($user);
-    $response->write(json_encode($data));
-});
-// виводить дані користувача і його книжки
 $app->get('/users/{id}', function ($request, $response, $args) use ($app, $db) {
 	$user = $db->user()
 	           ->select('id, name','email','city','date_of_birth','description')
@@ -22,7 +13,6 @@ $app->get('/users/{id}', function ($request, $response, $args) use ($app, $db) {
     $user['books'] = $user->book()->select('id, title, author, year, photo, state, status');
     $response->write(json_encode($user));
 });
-// оновлюємо дані користувача
 $app->put('/users/{id}', function ($request, $response, $args) use ($app, $db) {
     $user = $db->user()
     		   ->where('id', $args['id']);
@@ -33,7 +23,6 @@ $app->put('/users/{id}', function ($request, $response, $args) use ($app, $db) {
     }
     $response->write(json_encode($data));
 });
-// видаляємо користувача
 $app->delete('/users/{id}', function ($request, $response, $args) use ($app, $db) {
 	// TODO
 	// Delete user books???

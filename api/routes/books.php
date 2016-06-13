@@ -1,11 +1,9 @@
 <?php
 // Books
-// повертає всі книжки
 $app->get('/books', function ($request, $response, $args) use ($app, $db) {
 	$books = $db->book();
 	echo json_encode($books);
 });
-// додаємо нову книжку
 $app->post('/books', function ($request, $response, $args) use ($app, $db) {
 	// TODO
 	// need possibility to add tags, as they are in the separate table
@@ -13,7 +11,6 @@ $app->post('/books', function ($request, $response, $args) use ($app, $db) {
     $data = $db->book()->insert($book);
     $response->write(json_encode($data));
 });
-// повертає конкретну книжку за її id, fetch() використовується щоб виводилось як окремий об*єкт, а не масив
 $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 	$book = $db->book()
 			   ->select('id, title, author, year, photo, state, status')
@@ -28,7 +25,6 @@ $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 	$book['tags'] = $book->tags()->select('tag');
 	$response->write(json_encode($book));
 });
-// оновлюємо книжку
 $app->put('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 	// TODO
 	// the same as for post - tags etc
@@ -42,7 +38,6 @@ $app->put('/books/{id}', function ($request, $response, $args) use ($app, $db) {
     }
     $response->write(json_encode($data));
 });
-// видаляємо книжку
 $app->delete('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 	$book = $db->book()
 	           ->where('id', $args['id']);
@@ -102,14 +97,12 @@ $app->put('/books/{id}/requests/{request_id}', function ($request, $response, $a
     }
     $response->write(json_encode($data));
 });
-// пошук книг за тегом
 $app->get('/books/tags/{tag}', function($request, $response, $args) use ($app, $db) {
 	$books = $db->tags()
 				->select('book_id')
 				->where('tag LIKE ?', $args['tag']);
 	$response->write(json_encode($books));
 });
-// повертає усі теги
 $app->get('/books/tags/', function($request, $response, $args) use ($app, $db) {
 	$tags = $db->tags()
 			   ->select('tag')
