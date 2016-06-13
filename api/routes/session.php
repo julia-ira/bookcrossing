@@ -57,9 +57,12 @@ $app->post("/login", function ($request, $response, $arguments) use ($db,$config
         ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
 });
 $app->post("/signup", function ($request, $response, $arguments) use ($db,$config){
-	if($request->getParsedBody()){
+    // TODO, check if email is unique
+    $post = $request->getParsedBody();
+	if($post['name'] && $post['email'] && $post['password']){
+        $post['password'] = password_hash($post['password'] , PASSWORD_DEFAULT);
 		$user = $db->user()
-	               ->insert($request->getParsedBody());
+	               ->insert($post);
 	    $token = generateJWT($user["email"], $user['id'], $config['jwt']);
 	    $data["status"] = "ok";
 	    $data["token"] = $token;
