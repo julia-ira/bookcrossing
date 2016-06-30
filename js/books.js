@@ -1,4 +1,4 @@
-var serverUrl = "/api/";
+var serverUrl = "http://bookcrossing.esy.es/";
 
 Book = Backbone.Model.extend({
 	defaults: {
