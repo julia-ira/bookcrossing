@@ -1,0 +1,7 @@
+# Folders to ignore
+node_modules/
+app/dist/
+
+
+# Files to ignore
+/npm-debug.log
