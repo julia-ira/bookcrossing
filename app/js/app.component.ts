@@ -1,7 +1,6 @@
 import { Component } from 'angular2/core';
 import { HTTP_PROVIDERS } from 'angular2/http';
 import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
-
 import { BooklistComponent } from './booklist/booklist.component';
 
 @Component({
