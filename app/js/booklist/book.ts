@@ -1,12 +1,28 @@
 export class Book {
-	id:number = 0;
-	title:string = "";
-	author:string = "";
-	year:number = 0;
-	state:string = "";
-	status:string = "";
-	user_id:number = 0;
+    id: number;
+    title: string;
+    author: string;
+    year: number;
+    state: string;
+    status: string;
+    owner: any;
+    user_id:number;
 
-	constructor() {
-	}
+    constructor(obj: any) {
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                this[prop] = obj[prop];
+            }
+        }
+    }
+
+    getBookPostData() {
+        let data = "";
+        for (var prop in this) {
+            if (this.hasOwnProperty(prop)) {
+                data += prop + '=' + this[prop] + '&';
+            }
+        }
+        return data;
+    }
 }

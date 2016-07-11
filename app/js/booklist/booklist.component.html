@@ -1,9 +1,8 @@
-<h1>Test page</h1>
-<div>Hello {{name}}</div>
-<input [(ngModel)]="name" />
 <h2>Список книг</h2>
 <ul>
-  <li *ngFor="let book of books">
-    {{book.title}} - {{book.author}}
-  </li>
+    <li *ngFor="let book of books">
+        <a [routerLink]="['Bookdetail',{id: book.id}]">{{book.title}} - {{book.author}}</a>
+    </li>
 </ul>
+<book-form></book-form>
+<router-outlet></router-outlet>

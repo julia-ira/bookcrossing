@@ -1,0 +1,23 @@
+<form #bookForm="ngForm" (ngSubmit)="submitBook(bookForm.value)">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input id="title" type="text" class="form-control" placeholder="Title" ngControl="title">
+    </div>
+    <div class="form-group">
+        <label for="author">Author</label>
+        <input id="author" type="text" class="form-control" placeholder="Author" ngControl="author">
+    </div>
+    <div class="form-group">
+        <label for="state">State</label>
+        <input id="state" type="text" class="form-control" placeholder="State" ngControl="state">
+    </div>
+    <div class="form-group">
+        <label for="status">Status</label>
+        <input id="status" type="text" class="form-control" placeholder="Status" ngControl="status">
+    </div>
+    <div class="form-group">
+        <label for="user_id">User</label>
+        <input id="user_id" type="text" class="form-control" placeholder="User" ngControl="user_id">
+    </div>
+    <button type="submit">Submit</button>
+</form>

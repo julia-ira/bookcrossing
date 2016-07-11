@@ -1,0 +1,7 @@
+<div *ngIf="book">
+    <h1>{{book.title}} - {{book.author}}</h1>
+    <div><span>Year:</span><span>{{book?.year}}</span></div>
+    <div><span>State:</span><span>{{book?.state}}</span></div>
+    <div><span>Status:</span><span>{{book?.status}}</span></div>
+    <div><span>Owner:</span><span>{{book?.owner.name}}</span></div>
+</div>

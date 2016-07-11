@@ -9,6 +9,7 @@ $app->post('/books', function ($request, $response, $args) use ($app, $db) {
 	// need possibility to add tags, as they are in the separate table
     $book = $request->getParsedBody();
     $data = $db->book()->insert($book);
+    $data['request']=$book;
     $response->write(json_encode($data));
 });
 $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
@@ -20,8 +21,8 @@ $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 						        ->select('id, name, city, date_of_birth, description')
 						        ->where('id', $book['id'])
 						        ->fetch();
-	$book["owners"] = $user->ownership()
-			               ->select('user_id, start_date, end_date');
+	/*$book["owners"] = $user->ownership()
+			               ->select('user_id, start_date, end_date');*/
 	$book['tags'] = $book->tags()->select('tag');
 	$response->write(json_encode($book));
 });
