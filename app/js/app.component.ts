@@ -1,18 +1,12 @@
-import { Component } from 'angular2/core';
-import { HTTP_PROVIDERS } from 'angular2/http';
-import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
-
-import { BooklistComponent } from './booklist/booklist.component';
+import { Component } from '@angular/core';
+import { HTTP_PROVIDERS } from '@angular/http';
+import { ROUTER_DIRECTIVES } from '@angular/router';
 
 @Component({
     selector: 'my-app',
-    template: `<a [routerLink]="['Booklist']">Book list</a><router-outlet></router-outlet>`,
+    template: `<a [routerLink]="['booklist']">Book list</a><router-outlet></router-outlet>`,
     directives: [ROUTER_DIRECTIVES],
-    providers: [HTTP_PROVIDERS, ROUTER_PROVIDERS]
+    providers: [HTTP_PROVIDERS]
 })
 
-@RouteConfig([
-    { path: '/booklist', as: 'Booklist', component: BooklistComponent }
-])
-
-export class AppComponent { }
+export class AppComponent {}
