@@ -39,7 +39,9 @@ $app->put('/books/{id}', function ($request, $response, $args) use ($app, $db) {
     }
     $response->write(json_encode($data));
 });
+// secured
 $app->delete('/books/{id}', function ($request, $response, $args) use ($app, $db) {
+	// check if current user is book owner
 	$book = $db->book()
 	           ->where('id', $args['id']);
     $data = null;
@@ -49,6 +51,7 @@ $app->delete('/books/{id}', function ($request, $response, $args) use ($app, $db
     $response->write(json_encode($data));
 });
 //  add book request
+// secured
 $app->post('/books/{id}/requests', function ($request, $response, $args) use ($app, $db) {
 	// if auth implemented user_id should not be passed
     $bookrequest = $request->getParsedBody();
@@ -79,8 +82,10 @@ $app->get('/books/{id}/requests', function ($request, $response, $args) use ($ap
 	$response->write(json_encode($result));
 });
 // accept/decline book request (can we decline???)
+// secured
 $app->put('/books/{id}/requests/{request_id}', function ($request, $response, $args) use ($app, $db) {
 	// only accept goes here
+	// TODO check if user from jwt if current owner
     $requestbook = $db->request()->where('id', $args['request_id']);
     $data = null;
     if ($requestbook->fetch()) {
