@@ -54,6 +54,7 @@ $app->post("/login", function ($request, $response, $arguments) use ($db,$config
 
     return $response->withStatus(201)
         ->withHeader("Content-Type", "application/json")
+        ->withHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
         ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
 });
 $app->post("/signup", function ($request, $response, $arguments) use ($db,$config){

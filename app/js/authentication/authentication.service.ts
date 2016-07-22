@@ -6,12 +6,13 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class AuthenticationService {
     constructor(private http: Http) {}
-    private booksUrl = 'http://bookcrossing.esy.es/books'; // URL to web API
+    private authurl = 'http://bookcrossing.esy.es/login'; // URL to web API
 
-    login(email: any, password:any): Observable < Response > {
-        var headers = new Headers();
-        headers.append('Content-Type', 'application/x-www-form-urlencoded');
-        return this.http.post(this.booksUrl, book, {
+    login(email: string, password: string): Observable < Response > {
+        let headers = new Headers();
+        headers.append("Authorization", "Basic " + btoa(email + ":" + password));
+        headers.append("Content-Type", "application/x-www-form-urlencoded");
+        return this.http.post(this.authurl, {
             headers: headers
         });
     }
