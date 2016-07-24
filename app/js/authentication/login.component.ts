@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ROUTER_DIRECTIVES } from '@angular/router';
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
 import { CORE_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 import { Http, Headers } from '@angular/http';
 import { contentHeaders } from './headers';
@@ -15,7 +15,7 @@ import { AuthenticationService } from './authentication.service';
 
 export class LoginComponent {
 
-    constructor(public router: Router, public http: Http, private authenticationService: AuthenticationService,private _location: Location) {}
+    constructor(public router: Router, public http: Http, private authenticationService: AuthenticationService, private _location: Location) {}
 
     login(event: any, email: any, password: any) {
         event.preventDefault();
@@ -36,4 +36,5 @@ export class LoginComponent {
         event.preventDefault();
         //this.router.navigate(['/signup']);
     }
+
 }

@@ -2,27 +2,16 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/Rx';
 import { Observable } from 'rxjs/Observable';
+import { AuthHttp, tokenNotExpired } from 'angular2-jwt';
 import { Book } from './book';
 
 @Injectable()
 export class BooklistService {
-    constructor(private http: Http) {}
+    constructor(private http: Http, private authHttp: AuthHttp) {}
     private booksUrl = 'http://bookcrossing.esy.es/books'; // URL to web API
 
-    getBooks(): Observable < Book[] > {
-        return this.http.get(this.booksUrl)
-            .map(res => {
-                let books = res.json();
-                let result: Array < Book > = [];
-                if (books) {
-                    for (var book in books) {
-                        if (books.hasOwnProperty(book)) {
-                            result.push( < Book > books[book]);
-                        }
-                    }
-                }
-                return result;
-            });
+    getBooks(): Observable < Response > {
+        return this.http.get(this.booksUrl);
     }
 
     addBook(book: any): Observable < Response > {
@@ -41,4 +30,10 @@ export class BooklistService {
         return this.http.get(this.booksUrl + "/" + id)
             .map(res => res.json());
     }
+
+    getSecuredData(): Observable < Response > {
+        if (tokenNotExpired())
+            return this.authHttp.get('http://bookcrossing.esy.es/securetest');
+    }
+
 }

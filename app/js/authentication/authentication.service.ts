@@ -9,11 +9,13 @@ export class AuthenticationService {
     private authurl = 'http://bookcrossing.esy.es/login'; // URL to web API
 
     login(email: string, password: string): Observable < Response > {
-        let headers = new Headers();
-        headers.append("Authorization", "Basic " + btoa(email + ":" + password));
-        headers.append("Content-Type", "application/x-www-form-urlencoded");
-        return this.http.post(this.authurl, {
-            headers: headers
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Basic " + btoa(email + ":" + password));
+        console.log("Basic " + btoa(email + ":" + password));
+        authHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+        let data = "username=" + email + "&password=" + password;
+        return this.http.post(this.authurl, data, {
+            headers: authHeaders
         });
     }
 

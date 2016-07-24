@@ -4,5 +4,8 @@
         <a [routerLink]="[book.id]">{{book.title}} - {{book.author}}</a>
     </li>
 </ul>
+<p><a class="btn btn-primary btn-lg" role="button" (click)="logout()">Logout</a></p>
+<p><a class="btn btn-primary btn-lg" role="button" (click)="getSecuredData()">Get Secured Data!</a></p>
+<div><span>Secured:</span><span>{{securedData}}</span></div>
 <book-form></book-form>
 <router-outlet></router-outlet>
