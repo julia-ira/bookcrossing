@@ -4,21 +4,22 @@ import { BooklistService } from './booklist.service';
 
 @Component({
     selector: 'book-list',
-    templateUrl: 'app/js/booklist/booklist.component.html',
+    templateUrl: 'app/js/booklist/secured-booklist.component.html',
     providers: [BooklistService]
 })
 
-export class BooklistComponent {
+export class SecuredBooklistComponent {
     name = 'bookcrossing';
     books: any[];
 
     constructor(private booklistService: BooklistService, private router: Router) {}
 
-    getBooks() {
-        this.booklistService.getBooks()
-            .subscribe(
-                res => { this.books = res.json();
-                    console.log(this.books); }
-            );
+    getSecuredData() {
+        this.booklistService.getSecuredData().subscribe(res => this.books = res.json());
+    }
+
+    logout() {
+        localStorage.removeItem('id_token');
+        this.router.navigate(['/login']);
     }
 }

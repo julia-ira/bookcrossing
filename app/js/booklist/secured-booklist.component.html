@@ -1,0 +1,9 @@
+<div class="secured">
+    <button type="submit" (click)="getSecuredData()">Get secured data!</button>
+    <button type="submit" (click)="logout()">Logout</button>
+    <ul>
+        <li *ngFor="let book of books">
+            {{book.title}} - {{book.author}}
+        </li>
+    </ul>
+</div>
