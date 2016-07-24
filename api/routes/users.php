@@ -13,7 +13,9 @@ $app->get('/users/{id}', function ($request, $response, $args) use ($app, $db) {
     $user['books'] = $user->book()->select('id, title, author, year, photo, state, status');
     $response->write(json_encode($user));
 });
+// secured
 $app->put('/users/{id}', function ($request, $response, $args) use ($app, $db) {
+    // user can update only its own profile => id should not be passed in the url, but throught jwt
     $user = $db->user()
     		   ->where('id', $args['id']);
     $data = null;
@@ -23,6 +25,8 @@ $app->put('/users/{id}', function ($request, $response, $args) use ($app, $db) {
     }
     $response->write(json_encode($data));
 });
+// need to be removed soon
+// secured till that time
 $app->delete('/users/{id}', function ($request, $response, $args) use ($app, $db) {
 	// TODO
 	// Delete user books???

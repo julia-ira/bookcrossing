@@ -50,7 +50,7 @@ $app->post("/login", function ($request, $response, $arguments) use ($db,$config
     $user= $db->user()->where('email',$server["PHP_AUTH_USER"])->fetch();
     $token = generateJWT($server["PHP_AUTH_USER"], $user['id'], $config['jwt']);
     $data["status"] = "ok";
-    $data["token"] = $token;
+    $data["id_token"] = $token;
 
     return $response->withStatus(201)
         ->withHeader("Content-Type", "application/json")
@@ -65,7 +65,7 @@ $app->post("/signup", function ($request, $response, $arguments) use ($db,$confi
 	               ->insert($post);
 	    $token = generateJWT($user["email"], $user['id'], $config['jwt']);
 	    $data["status"] = "ok";
-	    $data["token"] = $token;
+	    $data["id_token"] = $token;
 
 	    return $response->withStatus(201)
 	        ->withHeader("Content-Type", "application/json")

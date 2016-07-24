@@ -1,6 +1,7 @@
 # Folders to ignore
 node_modules/
 app/dist/
+api/vendor/
 
 
 # Files to ignore

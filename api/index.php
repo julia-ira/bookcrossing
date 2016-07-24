@@ -1,7 +1,7 @@
 <?php
 
 require 'vendor/autoload.php';
-require_once 'vendor/NotORM.php';
+//require_once 'vendor/NotORM.php';
 
 $app = new \Slim\App();
 //session should be called first

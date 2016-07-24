@@ -9,6 +9,7 @@ $app->post('/books', function ($request, $response, $args) use ($app, $db) {
 	// need possibility to add tags, as they are in the separate table
     $book = $request->getParsedBody();
     $data = $db->book()->insert($book);
+    $data['request']=$book;
     $response->write(json_encode($data));
 });
 $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
@@ -20,8 +21,8 @@ $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 						        ->select('id, name, city, date_of_birth, description')
 						        ->where('id', $book['id'])
 						        ->fetch();
-	$book["owners"] = $user->ownership()
-			               ->select('user_id, start_date, end_date');
+	/*$book["owners"] = $user->ownership()
+			               ->select('user_id, start_date, end_date');*/
 	$book['tags'] = $book->tags()->select('tag');
 	$response->write(json_encode($book));
 });
@@ -38,7 +39,9 @@ $app->put('/books/{id}', function ($request, $response, $args) use ($app, $db) {
     }
     $response->write(json_encode($data));
 });
+// secured
 $app->delete('/books/{id}', function ($request, $response, $args) use ($app, $db) {
+	// check if current user is book owner
 	$book = $db->book()
 	           ->where('id', $args['id']);
     $data = null;
@@ -48,6 +51,7 @@ $app->delete('/books/{id}', function ($request, $response, $args) use ($app, $db
     $response->write(json_encode($data));
 });
 //  add book request
+// secured
 $app->post('/books/{id}/requests', function ($request, $response, $args) use ($app, $db) {
 	// if auth implemented user_id should not be passed
     $bookrequest = $request->getParsedBody();
@@ -78,8 +82,10 @@ $app->get('/books/{id}/requests', function ($request, $response, $args) use ($ap
 	$response->write(json_encode($result));
 });
 // accept/decline book request (can we decline???)
+// secured
 $app->put('/books/{id}/requests/{request_id}', function ($request, $response, $args) use ($app, $db) {
 	// only accept goes here
+	// TODO check if user from jwt if current owner
     $requestbook = $db->request()->where('id', $args['request_id']);
     $data = null;
     if ($requestbook->fetch()) {
