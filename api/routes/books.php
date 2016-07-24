@@ -1,8 +1,13 @@
 <?php
 // Books
 $app->get('/books', function ($request, $response, $args) use ($app, $db) {
-	$books = $db->book();
-	echo json_encode($books);
+	$books = $db->book()
+				->select('id, title, author, year, state, status, user_id');
+	$result = [];
+	foreach ($books as $key => $value) {
+		$result[] = $books[$key];
+	}
+	echo json_encode($result);
 });
 $app->post('/books', function ($request, $response, $args) use ($app, $db) {
 	// TODO
