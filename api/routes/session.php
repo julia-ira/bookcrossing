@@ -73,8 +73,11 @@ $app->post("/signup", function ($request, $response, $arguments) use ($db,$confi
 	}	
 });
 $app->get('/securetest', function ($request, $response, $args) use ($app, $db) {
-	$users = $db->user()
-	            ->select('name','email','city','date_of_birth','description');
-	print_r($this->jwt);
-    $response->write(json_encode($users));
+	$books = $db->book()
+                ->select('id, title, author, year, state, status, user_id');
+    $result = [];
+    foreach ($books as $key => $value) {
+        $result[] = $books[$key];
+    }
+    $response->write(json_encode($result));
 });
