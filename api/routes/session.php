@@ -50,11 +50,10 @@ $app->post("/login", function ($request, $response, $arguments) use ($db,$config
     $user= $db->user()->where('email',$server["PHP_AUTH_USER"])->fetch();
     $token = generateJWT($server["PHP_AUTH_USER"], $user['id'], $config['jwt']);
     $data["status"] = "ok";
-    $data["token"] = $token;
+    $data["id_token"] = $token;
 
     return $response->withStatus(201)
         ->withHeader("Content-Type", "application/json")
-        ->withHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
         ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
 });
 $app->post("/signup", function ($request, $response, $arguments) use ($db,$config){
@@ -66,7 +65,7 @@ $app->post("/signup", function ($request, $response, $arguments) use ($db,$confi
 	               ->insert($post);
 	    $token = generateJWT($user["email"], $user['id'], $config['jwt']);
 	    $data["status"] = "ok";
-	    $data["token"] = $token;
+	    $data["id_token"] = $token;
 
 	    return $response->withStatus(201)
 	        ->withHeader("Content-Type", "application/json")
