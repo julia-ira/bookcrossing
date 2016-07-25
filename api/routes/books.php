@@ -31,12 +31,12 @@ $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 	$book['tags'] = $book->tags()->select('tag');
 	$response->write(json_encode($book));
 });
-$app->put('/books/{id}', function ($request, $response, $args) use ($app, $db) {
-	// TODO
-	// the same as for post - tags etc
-    $book = $db->book()->where('id', $args['id']);
+// secured
+$app->put('/books/{id}/update', function ($request, $response, $args) use ($app, $db) {
+    $book = $db->book()->where('id', $args['id'])->fetch();
     $data = null;
-    if ($book->fetch()) {
+    if ($book) {
+    	echo "user: ". $book["user_id"];
         $post = $request->getParsedBody();
         // TODO
         // if post contains user_id => update user and add records to ownership table
@@ -45,7 +45,7 @@ $app->put('/books/{id}', function ($request, $response, $args) use ($app, $db) {
     $response->write(json_encode($data));
 });
 // secured
-$app->delete('/books/{id}', function ($request, $response, $args) use ($app, $db) {
+$app->delete('/books/{id}/delete', function ($request, $response, $args) use ($app, $db) {
 	// check if current user is book owner
 	$book = $db->book()
 	           ->where('id', $args['id']);
