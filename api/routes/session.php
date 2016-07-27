@@ -27,18 +27,23 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 $app->add(new \Slim\Middleware\JwtAuthentication([
     "secret" => $config['jwt'],
     "secure" => false,
-    "path" => [
+    "rules" => [
+        new RequestPathRule([
+            "path" => [
                 "/securetest",
-                "/users/update", 
-                "/books/(.*)/update", 
-                "/books/(.*)/delete", 
-                "/books/(.*)/requests"
-               ],
-    "passthrough" => ["/login","/signup"],
+                "/users", 
+                "/books/(.*)/"
+            ],
+            "passthrough" => ["/login","/signup"]
+        ]),
+        new \Slim\Middleware\JwtAuthentication\RequestMethodRule([
+            "passthrough" => ["OPTIONS", "GET"]
+        ])
+    ],
     "callback" => function ($request, $response, $arguments) use ($container) {
         $container["jwt"] = $arguments["decoded"];
     }
-]));
+    ]));
 function generateJWT($sub, $id, $secret) {
     $now = new DateTime();
     $future = new DateTime("now +2 hours");

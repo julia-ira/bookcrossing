@@ -15,7 +15,7 @@ $app->get('/users/{id}', function ($request, $response, $args) use ($app, $db) {
 });
 // secured
 // added "update" to this route to let other "/users" routes be accesible anonimously
-$app->put('/users/update', function ($request, $response, $args) use ($app, $db) {
+$app->put('/users', function ($request, $response, $args) use ($app, $db) {
     $user = $db->user()
     		   ->where('id', $this->jwt->id);
     $data = null;
