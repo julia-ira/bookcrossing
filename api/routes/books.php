@@ -13,58 +13,60 @@ $app->post('/books', function ($request, $response, $args) use ($app, $db) {
 	// TODO
 	// need possibility to add tags, as they are in the separate table
     $book = $request->getParsedBody();
+    $book['user_id'] = $this->jwt->id;
     $data = $db->book()->insert($book);
     $data['request']=$book;
     $response->write(json_encode($data));
 });
 $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 	$book = $db->book()
-			   ->select('id, title, author, year, photo, state, status')
+			   ->select('id, title, author, year, photo, state, status, user_id')
 			   ->where('id', $args['id'])
 			   ->fetch();
 	$book["owner"] = $user = $db->user()
 						        ->select('id, name, city, date_of_birth, description')
-						        ->where('id', $book['id'])
+						        ->where('id', $book['user_id'])
 						        ->fetch();
 	/*$book["owners"] = $user->ownership()
 			               ->select('user_id, start_date, end_date');*/
 	$book['tags'] = $book->tags()->select('tag');
 	$response->write(json_encode($book));
 });
+// secured
 $app->put('/books/{id}', function ($request, $response, $args) use ($app, $db) {
-	// TODO
-	// the same as for post - tags etc
-    $book = $db->book()->where('id', $args['id']);
+    $book = $db->book()->where('id', $args['id'])->fetch();
     $data = null;
-    if ($book->fetch()) {
-        $post = $request->getParsedBody();
-        // TODO
-        // if post contains user_id => update user and add records to ownership table
-        $data = $book->update($post);
+    if ($book && $book['user_id'] == $this->jwt->id) {
+    		$post = $request->getParsedBody();
+    		if($post['user_id']){
+    			unset($post['user_id']);
+    		}
+	        // TODO
+	        // if post contains user_id => update user and add records to ownership table
+	        $data = $book->update($post);
     }
     $response->write(json_encode($data));
 });
 // secured
 $app->delete('/books/{id}', function ($request, $response, $args) use ($app, $db) {
-	// check if current user is book owner
 	$book = $db->book()
-	           ->where('id', $args['id']);
+	           ->where('id', $args['id'])->fetch();
     $data = null;
-    if ($book->fetch()) {
+    if ($book && $book['user_id'] == $this->jwt->id) {
         $data = $book->delete();
     }
     $response->write(json_encode($data));
 });
-//  add book request
+// add book request
 // secured
 $app->post('/books/{id}/requests', function ($request, $response, $args) use ($app, $db) {
-	// if auth implemented user_id should not be passed
-    $bookrequest = $request->getParsedBody();
     $book = $db->book()->where('id',$args['id']);
-    if($bookrequest['user_id'] && $book->fetch() && $book['user_id'] != $bookrequest['user_id']){
+    $result = null;
+    if($book && $book['user_id'] != $this->jwt->id){
 		$data = array(
 	    	"book_id" => $args['id'],
-	    	"user_id" => $bookrequest['user_id']
+	    	"user_id" => $this->jwt->id
+	    	// status
 	    );
 	    $result = $db->request()->insert($data);
     }
@@ -76,6 +78,7 @@ $app->get('/books/{id}/requests', function ($request, $response, $args) use ($ap
 	$requestdb = $db->request()
 			   ->select('id, book_id, user_id, date')
 			   ->where('book_id', $args['id']);
+	$result = null;
 	foreach ($requestdb as $id => $request) {
 		$result['id'] = $request['id'];
 		$result["user"] = $db->user()
@@ -83,27 +86,26 @@ $app->get('/books/{id}/requests', function ($request, $response, $args) use ($ap
 	                         ->where('id', $request['user_id'])
 	                         ->fetch();
 	    $result["date"] = $request['date'];
+	    $result['status'] = $request['status'];
 	}
 	$response->write(json_encode($result));
 });
-// accept/decline book request (can we decline???)
+// accept book request
 // secured
 $app->put('/books/{id}/requests/{request_id}', function ($request, $response, $args) use ($app, $db) {
-	// only accept goes here
-	// TODO check if user from jwt if current owner
-    $requestbook = $db->request()->where('id', $args['request_id']);
+    $requestbook = $db->request()->where('id', $args['request_id'])->fetch();
     $data = null;
-    if ($requestbook->fetch()) {
-    	$status = array(
-    		"status" => "completed"
-        );
-        $data = $requestbook->update($status);
-        $book = $db->book()->where('id', $requestbook['book_id']);
-        if ($book->fetch()) {
+    if ($requestbook) {
+    	$book = $db->book()->where('id', $requestbook['book_id'])->fetch();
+    	if ($book && $book['user_id'] == $this->jwt->id) {
+	    	$status = array(
+	    		"status" => "completed"
+	        );
+	        $data['request'] = $requestbook->update($status);
         	$user = array(
         		"user_id" => $requestbook['user_id']
     		);
-        	$data = $book->update($user);
+        	$data['book'] = $book->update($user);
         }
     }
     $response->write(json_encode($data));

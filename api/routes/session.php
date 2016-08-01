@@ -24,6 +24,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
         "hash" => "password"
     ])
 ]));
+// for test
 $app->add(new \Slim\Middleware\JwtAuthentication([
     "secret" => $config['jwt'],
     "secure" => false,
@@ -33,6 +34,46 @@ $app->add(new \Slim\Middleware\JwtAuthentication([
         $container["jwt"] = $arguments["decoded"];
     }
 ]));
+// all post, put and delete requests
+$app->add(new \Slim\Middleware\JwtAuthentication([
+    "secret" => $config['jwt'],
+    "secure" => false,
+    "rules" => [
+        new \Slim\Middleware\JwtAuthentication\RequestPathRule([
+            "path" => [
+                "/users", 
+                "/books"
+            ],
+            "passthrough" => ["/login","/signup"]
+        ]),
+        new \Slim\Middleware\JwtAuthentication\RequestMethodRule([
+            "passthrough" => ["OPTIONS", "GET"]
+        ])
+    ],
+    "callback" => function ($request, $response, $arguments) use ($container) {
+        $container["jwt"] = $arguments["decoded"];
+    }
+]));
+// get requests that need to be secured
+$app->add(new \Slim\Middleware\JwtAuthentication([
+    "secret" => $config['jwt'],
+    "secure" => false,
+    "rules" => [
+        new \Slim\Middleware\JwtAuthentication\RequestPathRule([
+            "path" => [
+                "/books/(.*)/requests"
+            ],
+            "passthrough" => ["/login","/signup"]
+        ]),
+        new \Slim\Middleware\JwtAuthentication\RequestMethodRule([
+            "path" => ["GET"]
+        ])
+    ],
+    "callback" => function ($request, $response, $arguments) use ($container) {
+        $container["jwt"] = $arguments["decoded"];
+    }
+]));
+
 function generateJWT($sub, $id, $secret) {
     $now = new DateTime();
     $future = new DateTime("now +2 hours");
