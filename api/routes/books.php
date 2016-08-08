@@ -127,9 +127,9 @@ $app->get('/books/{id}/requests', function ($request, $response, $args) use ($ap
 	foreach ($requestdb as $id => $request) {
 		$r['id'] = $request['id'];
 		$r["user"] = $db->user()
-	                         ->select('id, name, city, date_of_birth, description')
-	                         ->where('id', $request['user_id'])
-	                         ->fetch();
+	                    ->select('id, name, city, date_of_birth, description')
+	                    ->where('id', $request['user_id'])
+	                    ->fetch();
 	    $r["date"] = $request['date'];
 	    $r['status'] = $request['status'];
 	    $result[] = $r;
