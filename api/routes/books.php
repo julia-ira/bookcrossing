@@ -15,9 +15,24 @@ $app->get('/books', function ($request, $response, $args) use ($app, $db) {
 $app->post('/books', function ($request, $response, $args) use ($app, $db) {
     $book = $request->getParsedBody();
     if($book['title'] && $book['author'] && $this->jwt->id){
-	    $book['user_id'] = $this->jwt->id;
-	    $data = $db->book()->insert($book);
+    	// filter post data to insert to db only values with keys from array below
+    	$keys = ['title','author','year','state','status'];
+    	$bookdata = [];
+    	$bookdata['user_id'] = $this->jwt->id;
+    	foreach ($book as $key => $value) {
+    		if(in_array($key, $keys))
+    			$bookdata[$key] = $value;
+    	}
+	    $data = $db->book()->insert($bookdata);
 	    if($data){
+	    	// add tags to corresponding table
+	    	if($book['tags']){
+	    		$tags = [];
+		    	foreach ($book['tags'] as $key => $tag) {
+		    		$tags[] = $db->tags()->insert(array("tag" => $tag, "book_id" => $data['id']))['tag'];
+		    	}
+		    	$data['tags'] = $tags;
+		    }
 		    return $response->write(json_encode($data));
 	    }
 	    return $response->withStatus(500);
@@ -44,16 +59,17 @@ $app->get('/books/{id}', function ($request, $response, $args) use ($app, $db) {
 // secured
 $app->put('/books/{id}', function ($request, $response, $args) use ($app, $db) {
     $book = $db->book()->where('id', $args['id'])->fetch();
-    $data = null;
     if ($book) {
     	if($book['user_id'] == $this->jwt->id){
     		$post = $request->getParsedBody();
-			if($post['user_id']){
-				unset($post['user_id']);
-			}
-	        // TODO
-	        // if post contains user_id => update user and add records to ownership table
-	        $updated = $book->update($post);
+    		$data = null;
+    		$keys = ['title','author','year','state','status'];
+	    	$bookdata = [];
+	    	foreach ($book as $key => $value) {
+	    		if(in_array($key, $keys))
+	    			$bookdata[$key] = $value;
+	    	}
+	        $updated = $book->update($bookdata);
 	        $data = $db->book()->where('id', $args['id'])->fetch();
 	        if($updated && $data){
 	        	return $response->write(json_encode($data));
@@ -104,7 +120,6 @@ $app->post('/books/{id}/requests', function ($request, $response, $args) use ($a
 });
 // show pending book requests
 $app->get('/books/{id}/requests', function ($request, $response, $args) use ($app, $db) {
-	// TODO should be shown only for books which are owned by current user
 	$requestdb = $db->request()
 			   ->select('id, book_id, user_id, date, status')
 			   ->where('book_id', $args['id']);

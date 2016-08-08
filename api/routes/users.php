@@ -26,15 +26,21 @@ $app->put('/users', function ($request, $response, $args) use ($app, $db) {
     $data = null;
     if ($user->fetch()) {
         $post = $request->getParsedBody();
+        if ($post['email'] && !filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+            return $response->withStatus(422);
+        }
+        $keys = ['name','email','password','city','date_of_birth','description','address'];
+        $userdata = [];
+        foreach ($post as $key => $value) {
+            if(in_array($key, $keys)){
+                $userdata[$key] = $value;
+            }
+        }
         // encoding password before updating
-        if(array_key_exists("password", $post)){
-            $post["password"] = password_hash($post['password'] , PASSWORD_DEFAULT);
+        if(array_key_exists('password', $userdata)){
+            $userdata['password'] = password_hash($userdata['password'] , PASSWORD_DEFAULT);
         }
-        // user can't update it's userid
-        if(array_key_exists("id", $post)){
-            unset($post["id"]);
-        }
-        $data = $user->update($post);
+        $data = $user->update($userdata);
         if($data){
             return $response->write(json_encode($data));
         }
