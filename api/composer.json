@@ -4,6 +4,7 @@
         "tuupola/slim-jwt-auth": "^2.3",
         "tuupola/slim-basic-auth": "^2.0",
         "firebase/php-jwt": "^3.0",
-        "vrana/notorm": "dev-master"
+        "vrana/notorm": "dev-master",
+        "zircote/swagger-php": "^2.0"
     }
 }
