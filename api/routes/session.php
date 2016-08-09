@@ -100,13 +100,23 @@ $app->post("/login", function ($request, $response, $arguments) use ($db,$config
 $app->post("/signup", function ($request, $response, $arguments) use ($db,$config){
     $post = $request->getParsedBody();
 	if($post['name'] && $post['email'] && $post['password']){
+        if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+            return $response->withStatus(422);
+        }
         $check = $db->user()->where('email',$post['email'])->fetch();
         if($check){
             return $response->withStatus(409);
         }
-        $post['password'] = password_hash($post['password'] , PASSWORD_DEFAULT);
-		$user = $db->user()
-	               ->insert($post);
+        $keys = ['name','email','password','city','date_of_birth','description','address'];
+        $userdata = [];
+        foreach ($post as $key => $value) {
+            if(in_array($key, $keys)){
+                $userdata[$key] = $value;
+            }
+        }
+        $userdata['password'] = password_hash($userdata['password'] , PASSWORD_DEFAULT);
+        $user = $db->user()
+                   ->insert($userdata);
         if($user){
             $token = generateJWT($user["email"], $user['id'], $config['jwt']);
             $data["status"] = "ok";
