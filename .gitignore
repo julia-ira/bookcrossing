@@ -2,7 +2,7 @@
 node_modules/
 app/dist/
 api/vendor/
-
+api/routes/config.ini
 
 # Files to ignore
 /npm-debug.log
