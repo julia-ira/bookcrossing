@@ -33,6 +33,16 @@ $app->post('/books', function ($request, $response, $args) use ($app, $db) {
 		    	}
 		    	$data['tags'] = $tags;
 		    }
+		    $user = $db->user()->where('id', $this->jwt->id)->fetch();
+		    if($user && !$user['activated']){
+		    	$activate = array(
+		    		"activated" => "1"
+		        );
+		        $data['activated']=$user->update($activate);
+		        if(!$data['activated']){
+		        	return $response->withStatus(500);
+		        }
+		    }
 		    return $response->write(json_encode($data));
 	    }
 	    return $response->withStatus(500);
@@ -103,7 +113,8 @@ $app->post('/books/{id}/requests', function ($request, $response, $args) use ($a
     $book = $db->book()->where('id',$args['id'])->fetch();
     $result = null;
     if($book){
-    	if($book['user_id'] != $this->jwt->id){
+    	$user = $db->user()->where('id',$this->jwt->id)->fetch();
+    	if($book['user_id'] != $this->jwt->id && $user && $user['activated']){
     		$data = array(
 		    	"book_id" => $args['id'],
 		    	"user_id" => $this->jwt->id
